@@ -12,8 +12,11 @@ import org.hibernate.SessionFactory;
 
 public class Main {
 
+
 	public static void main(String[] args) {
-		
+		 RoleType admin = RoleType.Admin;
+		 RoleType user = RoleType.User;
+		 RoleType Guest = RoleType.Guest;
 		// 이 jpabook은  persistence.xml파일에  <persistence-unit name="jpabook">
 		//JPA 프로그래밍을 하기 위해서는 항상 엔티티 매니저가 필요하다
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("jpabook");
@@ -29,12 +32,11 @@ public class Main {
 			
 			tx.begin();
 			
-			Member mem1 = save(em, id ,"AAAAA", 40);
-			id = 2L;
-			Member mem2 = save(em, id ,"bbbb", 50);
-			id = 3L;
-			Member mem3 = save(em, id ,"CCC", 50);
+			Member mem1 = save(em,"AAAAA", 40, admin);
 
+			Member mem2 = save(em,"bbbb", 50, RoleType.User);
+			Member mem3 = save(em,"CCC", 50, Guest);
+			
 			Member mem4 = find(em, 2L);
 			//여기서 m은 각 로우(엔티티 클래스 객체와 매핑)		
 			TypedQuery<?> query = em.createQuery("select m from Member m", Member.class);
@@ -68,8 +70,9 @@ public class Main {
 	
 			System.out.println("member.name: " + b.getUsername());
 
+		
 			
-			delete(em, id);
+//			delete(em, id);
 			//끝나고 커밋
 			tx.commit(); // 더티 체킹 수행 through 영속 컨텍스트의 스냅샷: update쿼리 생성 후, 실행
 
@@ -89,13 +92,12 @@ public class Main {
 	
 	
 	
-	 private static Member save(final EntityManager em, final Long id , String name, int age) 
+	 private static Member save(final EntityManager em, String name, int age, RoleType role) 
 	 {
 			Member member = new Member();
-			member.setId(id);
 			member.setUsername(name);
 			member.setAge(age);
-			
+			member.setRoleType(role);
 			em.persist(member);
 			return member;
 			

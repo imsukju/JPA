@@ -31,7 +31,7 @@ public class Member {
 	private String name;
 	
 
-	@ManyToOne()
+	@ManyToOne(targetEntity = Team.class)
 	private Team team;
 
 	

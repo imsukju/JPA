@@ -82,10 +82,10 @@ public class Main {
         for (Member member : team.getMembers()) { //
             System.out.printf("        멤버 ID:%d, 멤버 이름:%s \n", member.getId(), member.getName());
         }
-
         System.out.println("Member 엔티티 클래스 객체를 생성함.");
         Member mem1 = em.find(Member.class, member1Id);
         Member mem2 = em.find(Member.class, member2Id);
+        
 
         System.out.println("-createMembersAndTeam");
         System.out.println("******************************************************");

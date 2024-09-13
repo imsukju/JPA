@@ -29,7 +29,8 @@ public class Team {
 	
 	private String name;
 	
-	@OneToMany(targetEntity = Member.class)
+	@OneToMany(fetch = FetchType.LAZY) /* (targetEntity = Member.class) */
+	@JoinColumn(name = "Team_ID")
 	List<Member> members = new ArrayList<>();
 	
 	public void addMember(Member m)

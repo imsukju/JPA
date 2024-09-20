@@ -148,7 +148,7 @@ public class Main {
 					if(food.getFoodname() == "짜장면")
 					{
 						foodlist.remove(food);
-						break;g
+						break;
 					}
 				}
 			}

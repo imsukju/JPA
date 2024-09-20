@@ -3,7 +3,7 @@ import javax.persistence.*;
 
 
 @Entity
-//@IdClass(MemberProducctId.class)
+@IdClass(MemberProducctId.class)
 public class MemberProduct {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

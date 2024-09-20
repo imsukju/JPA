@@ -52,7 +52,7 @@ public class Member extends BaseEntity{
 	
 	@Override
 	public String toString() {
-		return "Member [id=" + id + ", name=" + name + "]";
+		return "Member [id=" + id + ", name=" + name + "  age = " +  age + "]";
 	}
 	
 

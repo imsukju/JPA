@@ -15,7 +15,8 @@ import com.sjjpa10.entity.Team;
 public class JpaBooks {
 
 static final String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	
+	static final Long minAge = 15L;
+	static final Long maxAge = 50L;
 	public static List<Long> initMemberTeamSampleData(EntityManagerFactory emf, int teamNumbers, int memberNumbers)
 	{
 		EntityManager em = emf.createEntityManager();
@@ -41,8 +42,7 @@ static final String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrst
 			{
 				Member member = new Member();
 				member.setName("mem :"+i);
-				Long minAge = 10L;
-				Long maxAge = 90L;
+
 				Long randomAge = generateRandomNumber(minAge, maxAge);
 				member.setAge(randomAge.intValue());
 				Long targetTeamId = generateRandomNumber(minIdValue, MaxIdValue);

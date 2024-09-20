@@ -20,4 +20,13 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/com/mysql/mysql-connector-j/8.3.0/mysql-connector-j-8.3.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/google/protobuf/protobuf-java/3.25.1/protobuf-java-3.25.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/querydsl/querydsl-jpa/5.0.0/querydsl-jpa-5.0.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/querydsl/querydsl-core/5.0.0/querydsl-core-5.0.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/mysema/commons/mysema-commons-lang/0.2.4/mysema-commons-lang-0.2.4.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/querydsl/querydsl-apt/5.0.0/querydsl-apt-5.0.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/querydsl/querydsl-codegen/5.0.0/querydsl-codegen-5.0.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/querydsl/codegen-utils/5.0.0/codegen-utils-5.0.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/eclipse/jdt/ecj/3.26.0/ecj-3.26.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/javax/inject/javax.inject/1/javax.inject-1.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/io/github/classgraph/classgraph/4.8.108/classgraph-4.8.108.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>

@@ -9,16 +9,20 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sjjpa10.entity.Member;
 import com.sjjpa10.entity.Team;
 import com.sjjpa10.entity.UserDTO;
+import com.sjjpa10.qentity.QMember;
+import com.sjjpa10.qentity.QTeam;
 import com.sjjpa10.utilities.JpaBooks;
-
+import com.querydsl.core.Tuple;
 
 public class Main {
 
 	static final int Team_NUMBERS = 10;
-	static final int MEMBER_NUMBERS = 50;
+	static final int MEMBER_NUMBERS = 500;
 
 	private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("jpabook1");
 
@@ -44,21 +48,193 @@ public class Main {
 //			testGroupbyHavingOrderby();
 //			setSubQueryOne();
 //			setSubQueryTwo();
-			testtt();
+	//		testQuerDsLX(em);
+//			testPaginAPIByJPQL();
+//			testQueryPagingDsLX();
+			testPaginaAPIWithoutOffsetByQueryDsl();
 
 		}
 
-		catch (Exception e) {
+		catch (Exception e)
+		{
 			tx.rollback();
 			e.printStackTrace();
 
 
 			// TODO: handle exception
-		} finally {
+		}
+		finally
+		{
 			em.close();
 			emf.close();
 		}
 
+	}
+
+	public static void testQuerDsLX(EntityManager em)
+	{
+		QTeam team = QTeam.team;
+		QMember member = QMember.member;
+
+		//QueryDSL에서 정의한 클래스;
+		// 파이썬에서 tuple을 지원함: List임. 그러나 불변객체()
+		List<Tuple> result = new JPAQuery<>(em).select(team.name, member.age.avg()).from(team).join(team.memberList, member)
+				.groupBy(team.name).having(member.age.avg().goe(30)).orderBy(member.age.avg().desc()).fetch();
+
+		for(com.querydsl.core.Tuple tuple : result)
+		{
+			String teamName = tuple.get(team.name);
+			Double avgAge = tuple.get(member.age.avg());
+
+			System.out.println("Team: " + teamName + ", Age: " + avgAge);
+		}
+
+	}
+
+	public static void testQueryPagingDsLX()
+	{
+		EntityManager em = emf.createEntityManager();
+		QTeam team = QTeam.team;
+		QMember member = QMember.member;
+		EntityTransaction tx = em.getTransaction();
+
+		JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
+
+
+
+		try
+		{
+			tx.begin();
+
+			//QueryDSL에서 정의한 클래스;
+			// 파이썬에서 tuple을 지원함: List임. 그러나 불변객체()
+			List<Member> memberList = jpaQueryFactory
+					.selectFrom(member)
+					.orderBy(member.id.asc())
+					.offset(0)
+					.limit(20)
+					.fetch();
+			for(Member m : memberList)
+			{
+
+				System.out.println("Member: " + m.toString());
+			}
+			tx.commit();
+
+		}
+
+		catch (Exception e)
+		{
+			tx.rollback();
+			e.printStackTrace();
+
+			// TODO: handle exception
+		} finally {
+			em.close();
+		}
+	}
+
+
+
+	public static Long getLastIdofMember()
+	{
+		EntityManager em = emf.createEntityManager();
+		QTeam team = QTeam.team;
+		QMember member = QMember.member;
+		EntityTransaction tx = em.getTransaction();
+		JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
+		Long lastMemberid  = -1l;
+
+
+		try
+		{
+			tx.begin();
+			lastMemberid = jpaQueryFactory
+					.select(member.id)
+					.from(member)
+					.orderBy(member.id.desc())
+					.limit(1)
+					.fetchOne();
+		}
+
+		catch (Exception e)
+		{
+			tx.rollback();
+			e.printStackTrace();
+
+			// TODO: handle exception
+		} finally {
+			em.close();
+		}
+		return lastMemberid;
+	}
+
+	public static Long getPagedMembers(Long lastMemberId, int limit) {
+		EntityManager em = emf.createEntityManager();
+		JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+		EntityTransaction tx = em.getTransaction();
+		List<Member> members = null;
+
+		try {
+			tx.begin();
+
+			QMember member = QMember.member;
+
+			if (lastMemberId == null) {
+				//페이지 처음
+				members = queryFactory
+						.selectFrom(member)
+						.orderBy(member.id.asc())
+						.limit(limit)
+						.fetch();
+			} else {
+				// 그이후
+				members = queryFactory
+						.selectFrom(member)
+						.where(member.id.gt(lastMemberId))
+						.orderBy(member.id.asc())
+						.limit(limit)
+						.fetch();
+			}
+
+			for (Member m : members) {
+				System.out.println(m);
+			}
+
+			tx.commit();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			tx.rollback();
+		} finally {
+			em.close();
+		}
+
+		if (members != null) {
+			if (!members.isEmpty()) {
+				// members.size() - 1는 members 리스트의 마지막 엘리먼트 인덱스 값
+				return members.get(members.size() - 1).getId();
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+
+	public static void testPaginaAPIWithoutOffsetByQueryDsl() {
+		int pageSize = 20;
+
+		// 총 페이지 수
+		int totalPages = (MEMBER_NUMBERS + pageSize - 1) / pageSize; // 올림 계산
+
+		Long lastMemberId = null;  // 첫 페이지의 페이징을 위한 코드...
+
+		for (int currentPage = 1; currentPage <= totalPages; currentPage++) {
+			System.out.println("Page " + currentPage + ":");
+
+			lastMemberId = getPagedMembers(lastMemberId, pageSize);
+		}
 	}
 
 	public static void queryMemberOfTypedQuery() {
@@ -165,6 +341,34 @@ public class Main {
 
 				// TODO: handle exception
 			} finally {
+				em.close();
+			}
+		}
+
+		public static void testPaginAPIByJPQL()
+		{
+			EntityManager em = emf.createEntityManager();
+			EntityTransaction tx = em.getTransaction();
+			try
+			{
+				tx.begin();
+				TypedQuery<Member> query = em.createQuery("select m from Member m ORDER BY m.name DESC ", Member.class).setFirstResult(10).setMaxResults(20);
+
+				List<Member> memberlist = query.getResultList();
+				for(Member m : memberlist)
+				{
+					System.out.println("member = " + m.getId());
+				}
+
+				tx.commit();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				tx.rollback();
+			}
+			finally
+			{
 				em.close();
 			}
 		}
@@ -406,7 +610,9 @@ public class Main {
 				e.printStackTrace();
 
 				// TODO: handle exception
-			} finally {
+			}
+			finally
+			{
 				em.close();
 			}
 		}
@@ -444,7 +650,9 @@ public class Main {
 			e.printStackTrace();
 
 			// TODO: handle exception
-		} finally {
+		}
+		finally
+		{
 			em.close();
 		}
 	}
@@ -475,12 +683,15 @@ public class Main {
 
 		}
 
-		catch (Exception e) {
+		catch (Exception e)
+		{
 			tx.rollback();
 			e.printStackTrace();
 
 			// TODO: handle exception
-		} finally {
+		}
+		finally
+		{
 			em.close();
 		}
 	}
@@ -512,12 +723,15 @@ public class Main {
 
 		}
 
-		catch (Exception e) {
+		catch (Exception e)
+		{
 			tx.rollback();
 			e.printStackTrace();
 
 			// TODO: handle exception
-		} finally {
+		}
+		finally
+		{
 			em.close();
 		}
 	}
@@ -560,15 +774,20 @@ public class Main {
 
 		}
 
-		catch (Exception e) {
+		catch (Exception e)
+		{
 			tx.rollback();
 			e.printStackTrace();
 
 			// TODO: handle exception
-		} finally {
+		}
+		finally
+		{
 			em.close();
 		}
 	}
+
+
 	
 
 }

@@ -24,17 +24,23 @@ public class Main {
 	static final int Team_NUMBERS = 10;
 	static final int MEMBER_NUMBERS = 500;
 
+
+
+
 	private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("jpabook1");
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+
 		EntityManager em = emf.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 
 		try {
 
 			tx.begin();
-			List<Long> membersIds = JpaBooks.initMemberTeamSampleData(emf, Team_NUMBERS, MEMBER_NUMBERS);
+
+
+//			List<Long> membersIds = JpaBooks.initMemberTeamSampleData(emf, Team_NUMBERS, MEMBER_NUMBERS);
 //			queryMemberOfTypedQuery();
 //			queryColumnOfTypedQuery();
 //			queryParameterBounding(membersIds);
@@ -51,7 +57,7 @@ public class Main {
 	//		testQuerDsLX(em);
 //			testPaginAPIByJPQL();
 //			testQueryPagingDsLX();
-			testPaginaAPIWithoutOffsetByQueryDsl();
+//			testPaginaAPIWithoutOffsetByQueryDsl();
 
 		}
 

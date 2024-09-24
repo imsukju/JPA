@@ -7,16 +7,30 @@ import java.util.Random;
 
 import javax.persistence.*;
 
-import com.sjjpa10.entity.Member;
-import com.sjjpa10.entity.Team;
-
+import com.sjjpa10.entity.*;
 
 
 public class JpaBooks {
 
+	private static final char HANGUL_START = '\uAC00';
+	private static final char HANGUL_END = '\uD7A3';
+
 static final String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	static final Long minAge = 15L;
 	static final Long maxAge = 50L;
+	static final Address[] addresses = {
+			new Address("012 Eldo St", "Incheon", "12345"),
+			new Address("345 Elm St", "Gwangju", "67890"),
+			new Address("678 Elm St", "Daegu", "12345"),
+			new Address("901 Elm St", "Busan", "67890"),
+			new Address("234 Elm St", "Seoul", "12345"),
+			new Address("567 Elm St", "Daegu", "67890"),
+			new Address("890 Elm St", "Ulsan", "12345"),
+			new Address("123 Elm St", "Suwon", "67890"),
+			new Address("456 Elm St", "Daegu", "12345"),
+			new Address("789 Elm St", "Andong", "67890")
+	};
+
 	public static List<Long> initMemberTeamSampleData(EntityManagerFactory emf, int teamNumbers, int memberNumbers)
 	{
 		EntityManager em = emf.createEntityManager();
@@ -45,6 +59,8 @@ static final String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrst
 
 				Long randomAge = generateRandomNumber(minAge, maxAge);
 				member.setAge(randomAge.intValue());
+				Address address = JpaBooks.addresses[generateRandomNumber(0L, 9L).intValue()];
+				member.setAddress(new Address(address.getStreet(), address.getCity(), address.getZipcod()));
 				Long targetTeamId = generateRandomNumber(minIdValue, MaxIdValue);
 				
 				Team team = em.find(Team.class, targetTeamId);
@@ -85,5 +101,87 @@ static final String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrst
 		Long MaxIdValue = Collections.max(ids);
 		return generateRandomNumber(minIdValue, MaxIdValue);
 	}
-	
+
+	public static List<Long> initPostCommentSampleDate(EntityManagerFactory emf, int postnum, Long postStringMaxsiz,int commentnum, Long CommetStringSize)
+	{
+		EntityManager em = emf.createEntityManager();
+		List<Long> ids = new ArrayList<>();
+		EntityTransaction tx = em.getTransaction();
+		try
+		{
+			tx.begin();
+
+			for(int i=0; i<postnum; i++)
+			{
+				Post post = new Post();
+				post.setTitle("New Post : " + i);
+				post.setText(generateRamdomString(postStringMaxsiz));
+
+				int rcommentsize = generateRandomNumber(0L,(long) commentnum).intValue();
+
+				for(int j =0; j<rcommentsize; j++)
+				{
+					Comment comment = new Comment();
+					comment.setText(getRandomHangul(CommetStringSize));
+					post.addComment(comment);
+
+				}
+				em.persist(post);
+				ids.add(post.getId());
+
+			}
+
+
+			em.flush();
+			em.clear();
+			tx.commit();
+		}
+		catch (Exception e)
+		{
+			tx.rollback();
+			e.printStackTrace();
+		}
+		finally
+		{
+			em.close();
+		}
+
+		return ids;
+	}
+
+	public static String generateRamdomString(Long max)
+	{
+		Long length = generateRandomNumber(1L,max);
+
+		StringBuffer ramdombuilder = new StringBuffer();
+
+		Random ran = new Random();
+
+		for(int i = 0; i<length; i++)
+
+		{
+			int index = ran.nextInt(characters.length());
+			ramdombuilder.append(characters.charAt(index));
+
+		}
+		return ramdombuilder.toString();
+	}
+
+	public static String getRandomHangul(Long max) {
+		Long length = generateRandomNumber(1L,max);
+
+		StringBuffer ramdombuilder = new StringBuffer();
+
+		Random random = new Random();
+
+		for(int i = 0; i<length; i++)
+
+		{
+			int index = random.nextInt(characters.length());
+			ramdombuilder.append(characters.charAt(index));
+
+		}
+		return ramdombuilder.toString();
+	}
+
 }

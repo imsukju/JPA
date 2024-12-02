@@ -1,4 +1,4 @@
-package com.practicejpa02.Aspectj.config;
+package com.practicejpa02.Ioc.service.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

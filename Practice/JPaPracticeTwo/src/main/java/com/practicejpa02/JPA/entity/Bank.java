@@ -36,7 +36,14 @@ public class Bank {
 
     private String name;
 
+    private int account;
+
     private int Money;
+
+    private void modifiermoney(int a)
+    {
+        Money += a;
+    }
 
 
 }
